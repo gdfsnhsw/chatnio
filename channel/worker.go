@@ -20,8 +20,8 @@ func NewChatRequest(group string, props *adaptercommon.ChatProps, hook globals.H
 	for !ticker.IsDone() {
 		if channel := ticker.Next(); channel != nil {
 			props.MaxRetries = utils.ToPtr(channel.GetRetry())
-			if err = adapter.NewChatRequest(channel, props, hook); err == nil || err.Error() == "signal" {
-				return nil
+			if err = adapter.NewChatRequest(channel, props, hook); adapter.IsSkipError(err) {
+				return err
 			}
 
 			globals.Warn(fmt.Sprintf("[channel] caught error %s for model %s at channel %s", err.Error(), props.OriginalModel, channel.GetName()))

@@ -23,6 +23,8 @@ export const modelColorMapper: Record<string, string> = {
   "gpt-4-turbo-preview": "purple-600",
   "gpt-4-1106-vision-preview": "purple-600",
   "gpt-4-vision-preview": "purple-600",
+  "gpt-4-turbo": "purple-600",
+  "gpt-4-turbo-2024-04-09": "purple-600",
   "gpt-4-0613": "purple-600",
   "gpt-4-0314": "purple-600",
   "gpt-4-all": "purple-600",
@@ -31,6 +33,8 @@ export const modelColorMapper: Record<string, string> = {
   "gpt-4-32k": "purple-600",
   "gpt-4-32k-0613": "purple-600",
   "gpt-4-32k-0314": "purple-600",
+  "gpt-4o": "purple-600",
+  "gpt-4o-2024-05-13": "purple-600",
 
   "dall-e-3": "purple-700",
 
@@ -61,6 +65,11 @@ export const modelColorMapper: Record<string, string> = {
   "chat-bison-001": "red-500",
   "gemini-pro": "red-500",
   "gemini-pro-vision": "red-500",
+  "gemini-1.5-pro-latest": "red-500",
+  "gemini-1.5-flash-latest": "red-500",
+
+  "deepseek-coder": "blue-700",
+  "deepseek-chat": "blue-700",
 
   "bing-creative": "blue-700",
   "bing-balanced": "blue-700",

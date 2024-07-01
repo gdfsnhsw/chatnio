@@ -10,7 +10,11 @@ import (
 )
 
 func IsAvailableError(err error) bool {
-	return err != nil && err.Error() != "signal"
+	return err != nil && (err.Error() != "signal" && !strings.Contains(err.Error(), "signal"))
+}
+
+func IsSkipError(err error) bool {
+	return err == nil || (err.Error() == "signal" || strings.Contains(err.Error(), "signal"))
 }
 
 func isQPSOverLimit(model string, err error) bool {

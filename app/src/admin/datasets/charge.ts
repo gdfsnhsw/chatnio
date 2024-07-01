@@ -62,10 +62,18 @@ export const pricing: PricingDataset = [
       "gpt-4-turbo-preview",
       "gpt-4-1106-vision-preview",
       "gpt-4-vision-preview",
+      "gpt-4-turbo",
+      "gpt-4-turbo-2024-04-09",
     ],
     input: 0.01,
     output: 0.03,
   },
+  {
+    models: ["gpt-4o", "gpt-4o-2024-05-13"],
+    input: 0.005,
+    output: 0.015,
+  },
+
   {
     models: ["gpt-4-32k", "gpt-4-32k-0314", "gpt-4-32k-0613"],
     input: 0.06,
@@ -173,7 +181,12 @@ export const pricing: PricingDataset = [
     currency: Currency.CNY,
   },
   {
-    models: ["zhipu-chatglm-lite", "zhipu-chatglm-std", "zhipu-chatglm-turbo", "glm-3-turbo"],
+    models: [
+      "zhipu-chatglm-lite",
+      "zhipu-chatglm-std",
+      "zhipu-chatglm-turbo",
+      "glm-3-turbo",
+    ],
     input: 0.005,
     output: 0.005,
     currency: Currency.CNY,
@@ -201,7 +214,12 @@ export const pricing: PricingDataset = [
     output: 0.001,
   },
   {
-    models: ["gemini-pro", "gemini-pro-vision"],
+    models: [
+      "gemini-pro",
+      "gemini-pro-vision",
+      "gemini-1.5-pro-latest",
+      "gemini-1.5-flash-latest",
+    ],
     input: 0.000125,
     output: 0.000375,
   },
@@ -209,6 +227,12 @@ export const pricing: PricingDataset = [
     models: ["hunyuan"],
     input: 0.1,
     output: 0.1,
+    currency: Currency.CNY,
+  },
+  {
+    models: ["deepseek-chat", "deepseek-coder"],
+    input: 0.001,
+    output: 0.002,
     currency: Currency.CNY,
   },
   {

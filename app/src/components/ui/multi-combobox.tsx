@@ -49,8 +49,9 @@ export function MultiCombobox({
   const { t } = useTranslation();
   const [open, setOpen] = React.useState(defaultOpen ?? false);
   const valueList = React.useMemo((): string[] => {
-    // list set
-    const set = new Set(list);
+    // list set (if some element in current value is not in list, it will be added)
+    const seq = [...list, ...(value ?? [])].filter((v) => v);
+    const set = new Set(seq);
     return [...set];
   }, [list]);
 
@@ -75,7 +76,7 @@ export function MultiCombobox({
       </PopoverTrigger>
       <PopoverContent className="w-[320px] max-w-[60vw] p-0" align={align}>
         <Command>
-          {disabledSearch && <CommandInput placeholder={searchPlaceholder} />}
+          {!disabledSearch && <CommandInput placeholder={searchPlaceholder} />}
           <CommandEmpty>{t("admin.empty")}</CommandEmpty>
           <CommandList className={`thin-scrollbar`}>
             {valueList.map((key) => (

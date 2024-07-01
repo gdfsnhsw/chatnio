@@ -109,9 +109,13 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
       "gpt-4-turbo-preview",
       "gpt-4-vision-preview",
       "gpt-4-1106-vision-preview",
+      "gpt-4-turbo",
+      "gpt-4-turbo-2024-04-09",
       "gpt-4-32k",
       "gpt-4-32k-0314",
       "gpt-4-32k-0613",
+      "gpt-4o",
+      "gpt-4o-2024-05-13",
       "dalle",
       "dall-e-2",
       "dall-e-3",
@@ -142,6 +146,8 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
       "gpt-4-turbo-preview",
       "gpt-4-vision-preview",
       "gpt-4-1106-vision-preview",
+      "gpt-4-turbo",
+      "gpt-4-turbo-2024-04-09",
       "gpt-4-32k",
       "gpt-4-32k-0314",
       "gpt-4-32k-0613",
@@ -187,13 +193,9 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
   chatglm: {
     endpoint: "https://open.bigmodel.cn",
     format: "<api-key>",
-    models: [
-      "glm-4",
-      "glm-4v",
-      "glm-3-turbo"
-    ],
+    models: ["glm-4", "glm-4v", "glm-3-turbo"],
     description:
-      "> 智谱 ChatGLM 密钥格式为 **api-key**，接入点填写 *https://open.bigmodel.cn* \n"
+      "> 智谱 ChatGLM 密钥格式为 **api-key**，接入点填写 *https://open.bigmodel.cn* \n",
   },
   qwen: {
     endpoint: "https://dashscope.aliyuncs.com",
@@ -242,7 +244,13 @@ export const ChannelInfos: Record<string, ChannelInfo> = {
   palm: {
     endpoint: "https://generativelanguage.googleapis.com",
     format: "<api-key>",
-    models: ["chat-bison-001", "gemini-pro", "gemini-pro-vision"],
+    models: [
+      "chat-bison-001",
+      "gemini-pro",
+      "gemini-pro-vision",
+      "gemini-1.5-pro-latest",
+      "gemini-1.5-flash-latest",
+    ],
     description:
       "> Google Gemini / PaLM2 密钥格式为 **api-key**，接入点填写 *https://generativelanguage.googleapis.com* 或其反代地址 \n" +
       "> Google 对请求 IP 地域有限制，可能出现 **User Location Is Not Supported** 的错误，可以看运气通过反代解决。 \n" +

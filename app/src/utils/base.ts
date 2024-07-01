@@ -1,3 +1,5 @@
+import React from "react";
+
 export function insert<T>(arr: T[], idx: number, value: T): T[] {
   return [...arr.slice(0, idx), value, ...arr.slice(idx)];
 }
@@ -92,6 +94,25 @@ export function isUrl(value: string): boolean {
   }
 }
 
+export function isEnter<T extends HTMLElement>(
+  e: React.KeyboardEvent<T> | KeyboardEvent,
+): boolean {
+  return e.key === "Enter" && e.keyCode != 229;
+}
+
+export function withCtrl<T extends HTMLElement>(
+  e: React.KeyboardEvent<T> | KeyboardEvent,
+): boolean {
+  // if platform is Mac, use Command instead of Ctrl
+  return e.ctrlKey || e.metaKey;
+}
+
+export function withShift<T extends HTMLElement>(
+  e: React.KeyboardEvent<T> | KeyboardEvent,
+): boolean {
+  return e.shiftKey;
+}
+
 export function resetJsArray<T>(arr: T[], target: T[]): T[] {
   /**
    * this function is used to reset an array to another array without changing the *pointer
@@ -118,4 +139,11 @@ export function getHostName(url: string): string {
 
 export function isB64Image(value: string): boolean {
   return /data:image\/([^;]+);base64,([a-zA-Z0-9+/=]+)/g.test(value);
+}
+
+export function trimSuffixes(value: string, suffixes: string[]): string {
+  for (const suffix of suffixes) {
+    if (value.endsWith(suffix)) return value.slice(0, -suffix.length);
+  }
+  return value;
 }
