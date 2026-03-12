@@ -22,6 +22,9 @@ type MultiComboBoxProps = {
   onChange: (value: string[]) => void;
   list: string[];
   listTranslate?: string;
+  listTranslateFormatter?: (
+    key: string,
+  ) => string | React.ReactNode | undefined;
   placeholder?: string;
   searchPlaceholder?: string;
   defaultOpen?: boolean;
@@ -29,6 +32,7 @@ type MultiComboBoxProps = {
   align?: "start" | "end" | "center" | undefined;
   disabled?: boolean;
   disabledSearch?: boolean;
+  classNameWrapper?: string;
   children?: React.ReactNode;
 };
 
@@ -37,6 +41,7 @@ export function MultiCombobox({
   onChange,
   list,
   listTranslate,
+  listTranslateFormatter,
   placeholder,
   searchPlaceholder,
   defaultOpen,
@@ -44,13 +49,15 @@ export function MultiCombobox({
   align,
   disabled,
   disabledSearch,
+  classNameWrapper,
   children,
 }: MultiComboBoxProps) {
   const { t } = useTranslation();
   const [open, setOpen] = React.useState(defaultOpen ?? false);
   const valueList = React.useMemo((): string[] => {
-    // list set
-    const set = new Set(list);
+    // list set (if some element in current value is not in list, it will be added)
+    const seq = [...list, ...(value ?? [])].filter((v) => v);
+    const set = new Set(seq);
     return [...set];
   }, [list]);
 
@@ -61,10 +68,12 @@ export function MultiCombobox({
       <PopoverTrigger asChild>
         {children ?? (
           <Button
+            unClickable
             variant={`outline`}
             role={`combobox`}
             aria-expanded={open}
             className={cn("w-[320px] max-w-[60vw] justify-between", className)}
+            classNameWrapper={classNameWrapper}
             disabled={disabled}
           >
             <Check className="mr-2 h-4 w-4 shrink-0 opacity-50" />
@@ -75,7 +84,7 @@ export function MultiCombobox({
       </PopoverTrigger>
       <PopoverContent className="w-[320px] max-w-[60vw] p-0" align={align}>
         <Command>
-          {disabledSearch && <CommandInput placeholder={searchPlaceholder} />}
+          {!disabledSearch && <CommandInput placeholder={searchPlaceholder} />}
           <CommandEmpty>{t("admin.empty")}</CommandEmpty>
           <CommandList className={`thin-scrollbar`}>
             {valueList.map((key) => (
@@ -83,20 +92,29 @@ export function MultiCombobox({
                 key={key}
                 value={key}
                 onSelect={(current) => {
-                  if (v.includes(current)) {
-                    onChange(v.filter((item) => item !== current));
+                  // keep original case
+                  const originalItem = valueList.find(item => item.toLowerCase() === current.toLowerCase());
+                  if (!originalItem) return;
+
+                  const existingIndex = v.findIndex(item => item.toLowerCase() === current.toLowerCase());
+                  if (existingIndex !== -1) {
+                    onChange(v.filter((_, index) => index !== existingIndex));
                   } else {
-                    onChange([...v, current]);
+                    onChange([...v, originalItem]);
                   }
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    v.includes(key) ? "opacity-100" : "opacity-0",
+                    v.some(item => item.toLowerCase() === key.toLowerCase()) ? "opacity-100" : "opacity-0",
                   )}
                 />
-                {listTranslate ? t(`${listTranslate}.${key}`) : key}
+                {listTranslateFormatter
+                  ? listTranslateFormatter(key)
+                  : listTranslate
+                  ? t(`${listTranslate}.${key}`)
+                  : key}
               </CommandItem>
             ))}
           </CommandList>

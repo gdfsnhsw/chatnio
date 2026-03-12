@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getErrorMessage } from "@/utils/base.ts";
 import { isEmailValid } from "@/utils/form.ts";
+import { toast } from "sonner";
 
 export type LoginForm = {
   username: string;
@@ -58,6 +59,20 @@ export type ResetResponse = {
   error: string;
 };
 
+export type UserInfo = {
+  id: number;
+  register_days: number;
+  used_quota: number;
+  plan_total_month: number;
+  email: string;
+};
+
+export type UserInfoResponse = {
+  status: boolean;
+  error: string;
+  data: UserInfo;
+};
+
 export async function doLogin(
   data: DeepLoginForm | LoginForm,
 ): Promise<LoginResponse> {
@@ -85,10 +100,14 @@ export async function doRegister(
   }
 }
 
-export async function doVerify(email: string): Promise<VerifyResponse> {
+export async function doVerify(
+  email: string,
+  checkout?: boolean,
+): Promise<VerifyResponse> {
   try {
     const response = await axios.post("/verify", {
       email,
+      checkout,
     } as VerifyForm);
     return response.data as VerifyResponse;
   } catch (e) {
@@ -113,22 +132,41 @@ export async function doReset(data: ResetForm): Promise<ResetResponse> {
 
 export async function sendCode(
   t: any,
-  toast: any,
   email: string,
+  checkout?: boolean,
 ): Promise<boolean> {
   if (email.trim().length === 0 || !isEmailValid(email)) return false;
 
-  const res = await doVerify(email);
+  const res = await doVerify(email, checkout);
   if (!res.status)
-    toast({
-      title: t("auth.send-code-failed"),
+    toast.error(t("auth.send-code-failed"), {
       description: t("auth.send-code-failed-prompt", { reason: res.error }),
     });
   else
-    toast({
-      title: t("auth.send-code-success"),
+    toast.info(t("auth.send-code-success"), {
       description: t("auth.send-code-success-prompt"),
     });
 
   return res.status;
+}
+
+export const initialUserInfo: UserInfo = {
+  id: 0,
+  register_days: 0,
+  used_quota: 0,
+  plan_total_month: 0,
+  email: "",
+};
+
+export async function getUserInfo(): Promise<UserInfoResponse> {
+  try {
+    const response = await axios.get("/userinfo");
+    return response.data as UserInfoResponse;
+  } catch (e) {
+    return {
+      status: false,
+      error: getErrorMessage(e),
+      data: { ...initialUserInfo },
+    };
+  }
 }

@@ -8,11 +8,12 @@ import router from "@/router.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { useEffect, useRef, useState } from "react";
 import { manager } from "@/api/generation.ts";
-import { useToast } from "@/components/ui/use-toast.ts";
 import { handleGenerationData } from "@/utils/processor.ts";
 import { selectModel } from "@/store/chat.ts";
-import ModelFinder from "@/components/home/ModelFinder.tsx";
+import ModelArea from "@/components/home/ModelArea.tsx";
 import { appLogo } from "@/conf/env.ts";
+import { isEnter } from "@/utils/base.ts";
+import { toast } from "sonner";
 
 type WrapperProps = {
   onSend?: (value: string, model: string) => boolean;
@@ -28,8 +29,6 @@ function Wrapper({ onSend }: WrapperProps) {
   const model = useSelector(selectModel);
   const modelRef = useRef(model);
 
-  const { toast } = useToast();
-
   function clear() {
     setData("");
     setQuota(0);
@@ -42,14 +41,12 @@ function Wrapper({ onSend }: WrapperProps) {
   });
 
   manager.setErrorHandler((err: string) => {
-    toast({
-      title: t("generate.failed"),
+    toast.error(t("generate.failed"), {
       description: `${t("generate.reason")} ${err}`,
     });
   });
   manager.setFinishedHandler((hash: string) => {
-    toast({
-      title: t("generate.success"),
+    toast.success(t("generate.success"), {
       description: t("generate.success-prompt"),
     });
     setHash(hash);
@@ -75,7 +72,7 @@ function Wrapper({ onSend }: WrapperProps) {
     target.focus();
     target.removeEventListener("keydown", () => {});
     target.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
+      if (isEnter(e)) {
         // cannot use model here, because model is not updated
         handleSend(modelRef.current);
       }
@@ -148,7 +145,7 @@ function Wrapper({ onSend }: WrapperProps) {
         </Button>
       </div>
       <div className={`model-box`}>
-        <ModelFinder side={`bottom`} />
+        <ModelArea side={`bottom`} />
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
 package admin
 
 import (
+	"chat/adapter"
 	"chat/connection"
 	"chat/utils"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 func IncrErrorRequest(cache *redis.Client) {
@@ -24,10 +26,10 @@ func IncrModelRequest(cache *redis.Client, model string, tokens int64) {
 	utils.IncrWithExpire(cache, getModelFormat(getDay(), model), tokens, time.Hour*24*7*2)
 }
 
-func AnalysisRequest(model string, buffer *utils.Buffer, err error) {
+func AnalyseRequest(model string, buffer *utils.Buffer, err error) {
 	instance := connection.Cache
 
-	if err != nil && err.Error() != "signal" {
+	if adapter.IsAvailableError(err) {
 		IncrErrorRequest(instance)
 		return
 	}

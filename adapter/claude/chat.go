@@ -54,12 +54,16 @@ func (c *ChatInstance) GetTokens(props *adaptercommon.ChatProps) int {
 }
 
 func (c *ChatInstance) ConvertMessages(props *adaptercommon.ChatProps) []globals.Message {
-	// anthropic api: top message must be user message, system message is not allowed
+	// anthropic api: top message must be user message, only `user` and `assistant` role messages are allowd
 	start := false
 
 	result := make([]globals.Message, 0)
 
 	for _, message := range props.Message {
+		if message.Role == globals.System {
+			continue
+		}
+
 		// if is first message, set it to user message
 		if !start {
 			start = true
@@ -68,11 +72,6 @@ func (c *ChatInstance) ConvertMessages(props *adaptercommon.ChatProps) []globals
 				Content: message.Content,
 			})
 			continue
-		}
-
-		// if is system message, set it to user message
-		if message.Role == globals.System {
-			message.Role = globals.User
 		}
 
 		// anthropic api does not allow multi-same role messages
@@ -126,12 +125,22 @@ func (c *ChatInstance) GetMessages(props *adaptercommon.ChatProps) []Message {
 	})
 }
 
+func (c *ChatInstance) GetSystemPrompt(props *adaptercommon.ChatProps) (prompt string) {
+	for _, message := range props.Message {
+		if message.Role == globals.System {
+			prompt += message.Content
+		}
+	}
+	return
+}
+
 func (c *ChatInstance) GetChatBody(props *adaptercommon.ChatProps, stream bool) *ChatBody {
 	messages := c.GetMessages(props)
 	return &ChatBody{
 		Messages:    messages,
 		MaxTokens:   c.GetTokens(props),
 		Model:       props.Model,
+		System:      c.GetSystemPrompt(props),
 		Stream:      stream,
 		Temperature: props.Temperature,
 		TopP:        props.TopP,

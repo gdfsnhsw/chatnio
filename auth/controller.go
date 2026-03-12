@@ -4,9 +4,10 @@ import (
 	"chat/channel"
 	"chat/globals"
 	"chat/utils"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type RegisterForm struct {
@@ -17,7 +18,8 @@ type RegisterForm struct {
 }
 
 type VerifyForm struct {
-	Email string `form:"email" binding:"required"`
+	Email    string `form:"email" binding:"required"`
+	Checkout bool   `form:"checkout"`
 }
 
 type LoginForm struct {
@@ -228,7 +230,7 @@ func VerifyAPI(c *gin.Context) {
 		return
 	}
 
-	if err := Verify(c, form.Email); err != nil {
+	if err := Verify(c, form.Email, form.Checkout); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"status": false,
 			"error":  err.Error(),
@@ -271,6 +273,26 @@ func StateAPI(c *gin.Context) {
 		"user":   username,
 		"admin":  utils.GetAdminFromContext(c),
 	})
+}
+
+func UserInfoAPI(c *gin.Context) {
+	user := GetUserByCtx(c)
+	if user == nil {
+		return
+	}
+
+	db := utils.GetDBFromContext(c)
+	if info, err := user.GetUserInfo(db); err == nil {
+		c.JSON(200, gin.H{
+			"status": true,
+			"data":   info,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"status": false,
+			"error":  err.Error(),
+		})
+	}
 }
 
 func IndexAPI(c *gin.Context) {
@@ -364,6 +386,9 @@ func SubscriptionAPI(c *gin.Context) {
 			"is_subscribed": false,
 			"enterprise":    false,
 			"expired":       0,
+			"expired_at":    "1970-01-01 00:00:00",
+			"refresh":       0,
+			"refresh_at":    "1970-01-01 00:00:00",
 			"usage":         channel.UsageMap{},
 		})
 	}
@@ -374,6 +399,9 @@ func SubscriptionAPI(c *gin.Context) {
 		"is_subscribed": user.IsSubscribe(db),
 		"enterprise":    user.IsEnterprise(db),
 		"expired":       user.GetSubscriptionExpiredDay(db),
+		"expired_at":    user.GetSubscriptionExpiredAt(db).Format("2006-01-02 15:04:05"),
+		"refresh":       user.GetSubscriptionRefreshDay(db, cache),
+		"refresh_at":    user.GetSubscriptionRefreshAt(db, cache).Format("2006-01-02 15:04:05"),
 		"usage":         user.GetSubscriptionUsage(db, cache),
 	})
 }

@@ -1,7 +1,7 @@
-version: '3'
+version: "3"
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:5.7.44
     container_name: db
     restart: always
     environment:
@@ -9,6 +9,7 @@ services:
       MYSQL_DATABASE: chatnio
       MYSQL_USER: chatnio
       MYSQL_PASSWORD: chatnio123456!
+      TZ: Asia/Shanghai
     expose:
       - "3306"
     volumes:
@@ -17,7 +18,7 @@ services:
       - chatnio-network
 
   redis:
-    image: redis:latest
+    image: redis:8.2.1
     container_name: redis
     restart: always
     expose:
@@ -47,7 +48,7 @@ services:
       MYSQL_HOST: mysql
       MYSQL_USER: chatnio
       MYSQL_PASSWORD: chatnio123456!
-      MYSQL_DATABASE: chatnio
+      MYSQL_DB: chatnio
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
